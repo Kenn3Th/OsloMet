@@ -8,7 +8,7 @@
 #define len 20        //Length av array
 #define bits 1024.0   //Bit resolution for Arduino UNO
 #define mV 5000.0     //Reference voltage (5V)
-float temp_sen[len], t_min, t_max, t_mean, motor_speed, konv;
+float temp_sen[len], t_min, t_max, t_mean, motor_speed, converter;
 
 /****      Code       ****/
 void setup() {
@@ -26,13 +26,14 @@ void loop() {
  * relation between mV and bit resolution, referenceVoltage/bitResolution = Rel
  * (measured value)*Rel*25C/750mV = Actual temperature in Celsius
  */
-  konv = (mV/bits)*(25.0/750.0);
+  converter = (mV/bits)*(25.0/750.0);
   for(int i=0;i<len;i++){
-      temp_sen[i] = analogRead(temp_pin)*konv;
+      temp_sen[i] = analogRead(temp_pin)*converter;
       delay(500);
   }
   sortering(temp_sen,len);
   max_min_mean(temp_sen,len,&t_min,&t_max,&t_mean);
+  /*** Printing max,min and mean values of mesured temperature ***/
   Serial.println("---Max temperatur---");
   Serial.println(t_max);
   Serial.println("---Min temperatur---");
@@ -44,6 +45,4 @@ void loop() {
   analogWrite(pin_6,motor_speed);
   digitalWrite(pin_4,HIGH);
   digitalWrite(pin_5,LOW); 
-  Serial.println("Vifte hastighet");
-  Serial.println(motor_speed);
 }
